@@ -19,7 +19,6 @@ class ExtensionAvailable extends Loadable<typeof defaultLoading> {
         super();
         this.loading = defaultLoading;
     }
-    defaultLog = vscode.window.createOutputChannel("Tech Platform");
 
     @loadable("extensions")
     @errorHandle()
@@ -31,19 +30,9 @@ class ExtensionAvailable extends Loadable<typeof defaultLoading> {
         const extensions = data as Extension[];
         this.extensions = extensions;
     }
-
-    public Log(message?: string) {
-        if (message) {
-            this.defaultLog.appendLine(message);
-        }
-    }
-
 }
 
 export function getExtensionAvailable() {
     const extensionAvailable = new ExtensionAvailable();
     extensionAvailable.loadExtensions();
-    for (let extension of extensionAvailable.extensions) {
-        extensionAvailable.Log(extension.name);
-    }
 }

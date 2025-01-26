@@ -6,10 +6,8 @@ export const errorHandle = (title?: string, desc?: string) =>
     try {
       return await method.call(self, ...args);
     } catch (error) {
-      vscode.window.showErrorMessage(error.message);
-        // notification.error({
-        // message: title || "Error",
-        // description: desc || (error as Error).message,
-        // placement: "bottomRight",);
+      if (error instanceof Error) {
+        vscode.window.showErrorMessage(error.message);  
+      }
     }
   });
