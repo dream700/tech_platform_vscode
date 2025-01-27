@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { createDecorator } from "./decorators";
+import { createDecorator } from "../decorators/create";
 
 export const successfullyNotify = (message: string, description?: string) =>
   createDecorator(async (self, method, ...args) => {

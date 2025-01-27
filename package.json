@@ -1,7 +1,7 @@
 {
   "name": "tech-platform",
-  "displayName": "Tech Platform",
-  "description": "Plugin for Tech platform",
+  "displayName": "VK Tech Platform",
+  "description": "Plugin for VK Tech platform",
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.96.0"
@@ -15,18 +15,22 @@
     "commands": [
       {
         "command": "tech-platform.helloWorld",
-        "title": "Hello World"
+        "title": "Test TP extension"
       },
       {
         "command": "tech-platform.checkConnection",
         "title": "Check connection to Personal stand (ping em-user-api.service.cloudcore)"
+      },
+      {
+        "command": "tech-platform.getExtensionAvailable",
+        "title": "Get available extensions"
       }
     ],
     "viewsContainers": {
       "activitybar": [
         {
           "id": "tech-platform",
-          "title": "Tech Platform extension",
+          "title": "VK Tech Platform",
           "icon": "$(lightbulb)"
         }
       ]
@@ -34,9 +38,14 @@
     "views": {
       "tech-platform": [
         {
-          "id": "tp.extension",
+          "id": "vk-tp.globalVars",
+          "name": "GLOBAL VARS",
+          "contextualTitle": "VK Tech Platform extension explorer"
+        },
+        {
+          "id": "vk-tp.extension",
           "name": "Extension Available",
-          "contextualTitle": "Tech Platform extension explorer"
+          "contextualTitle": "VK Tech Platform extension explorer"
         }
       ]
     }

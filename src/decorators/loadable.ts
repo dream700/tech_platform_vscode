@@ -1,4 +1,4 @@
-import { createDecorator } from "./decorators";
+import { createDecorator } from "../decorators/create";
 
 type KeyBooleanValue = {
   [key: string]: boolean;

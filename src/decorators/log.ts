@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { createDecorator } from "./decorators";
+import { createDecorator } from "../decorators/create";
 
 export type LogPoint = "before" | "after" | "error" | "success";
 
@@ -35,7 +35,7 @@ export const log = (points = defaultLogPoint) =>
       throw error;
     } finally {
       if (points.includes("after")) {
-        defaultLog.append(`The method ${method.name} completed`);
+          defaultLog.append(`The method ${method.name} completed`);
       }
     }
   });
