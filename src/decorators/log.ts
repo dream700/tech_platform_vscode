@@ -23,7 +23,6 @@ export const log = (points = defaultLogPoint) =>
       if (points.includes("success")) {
         defaultLog.append(`The method ${method.name} worked successfully. Return value: ${result}`);
       }
-
       return result;
     } catch (error) {
       if (points.includes("error")) {
@@ -35,7 +34,7 @@ export const log = (points = defaultLogPoint) =>
       throw error;
     } finally {
       if (points.includes("after")) {
-          defaultLog.appendLine(`The method ${method.name} completed`);
+        defaultLog.appendLine(`The method ${method.name} completed`);
       }
     }
   });

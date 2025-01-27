@@ -34,7 +34,6 @@ export class GlobalVars extends Loadable<typeof defaultLoading> implements vscod
         const data: any = await response.json();
         this.globalVars = this.parseJson(data);
     }
-
     private parseJson(json: any, parentLabel: string = 'Root'): TGlobalVars[] {
         const items: TGlobalVars[] = [];
         if (typeof json === 'object' && json !== null) {

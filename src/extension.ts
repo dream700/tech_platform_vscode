@@ -21,7 +21,7 @@ export function activate(context: vscode.ExtensionContext) {
 		// Display a message box to the user
 		vscode.window.showInformationMessage('Hello World from Tech Platform from VS Code!');
 	});
-
+	
 	const disposableCheckConnection = vscode.commands.registerCommand('tech-platform.checkConnection', () => {
 		checkConnectionOnStand().then(
 			res => {
