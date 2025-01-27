@@ -4,7 +4,7 @@ import { errorHandle } from '../decorators/errorHandle';
 import { successfullyNotify } from '../decorators/successfully';
 import { log } from '../decorators/log';
 
-export type TGlobalVars = {
+type TGlobalVars = {
     name: string;
     value?: string;
     vars?: TGlobalVars[] | undefined;
@@ -15,6 +15,9 @@ const defaultLoading = {
 };
 
 export class GlobalVars extends Loadable<typeof defaultLoading> implements vscode.TreeDataProvider<TGlobalVars> {
+    private _onDidChangeTreeData: vscode.EventEmitter<TGlobalVars | undefined | void> = new vscode.EventEmitter<TGlobalVars | undefined | void>();
+    readonly onDidChangeTreeData: vscode.Event<TGlobalVars | undefined | void> = this._onDidChangeTreeData.event;
+
     globalVars: TGlobalVars[] = [];
 
     constructor() {
@@ -32,7 +35,7 @@ export class GlobalVars extends Loadable<typeof defaultLoading> implements vscod
         this.globalVars = this.parseJson(data);
     }
 
-private parseJson(json: any, parentLabel: string = 'Root'): TGlobalVars[] {
+    private parseJson(json: any, parentLabel: string = 'Root'): TGlobalVars[] {
         const items: TGlobalVars[] = [];
         if (typeof json === 'object' && json !== null) {
             for (const key in json) {
@@ -49,6 +52,9 @@ private parseJson(json: any, parentLabel: string = 'Root'): TGlobalVars[] {
         return items;
     }
 
+    public refresh(): void {
+        this.loadGlobalVars().then(() => this._onDidChangeTreeData.fire());
+    }
 
     static index: number = 0;
     public getTreeItem(element: TGlobalVars): vscode.TreeItem {
@@ -58,11 +64,11 @@ private parseJson(json: any, parentLabel: string = 'Root'): TGlobalVars[] {
 
         treeItem.id = element.name + GlobalVars.index.toString();
         GlobalVars.index++;
-        if (element.name?.endsWith("GLOBAL VARS")) {
-            treeItem.contextValue = "root";
-        } else {
-            treeItem.contextValue = "extension";
-        }
+        // if (element.name?.endsWith("GLOBAL")) {
+        //     treeItem.contextValue = "root";
+        // } else {
+        //     treeItem.contextValue = "extension";
+        // }
         treeItem.collapsibleState = element.vars ? vscode.TreeItemCollapsibleState.Collapsed : vscode.TreeItemCollapsibleState.None;
         return treeItem;
     }

@@ -2,8 +2,8 @@
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
 import { IPingResType } from './providers.js';
-import { getExtensionAvailable } from './commands/ext-available.js';
-import { getGlobalVars } from './commands/global-vars';
+import { ExtensionAvailable } from './commands/ext-available.js';
+import { GlobalVars } from './commands/global-vars';
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -24,7 +24,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 	const disposableCheckConnection = vscode.commands.registerCommand('tech-platform.checkConnection', () => {
 		checkConnectionOnStand().then(
-			res => {				
+			res => {
 				const result = res as IPingResType;
 				if (result.alive !== undefined) {
 					if (result.alive) {
@@ -38,15 +38,21 @@ export function activate(context: vscode.ExtensionContext) {
 		);
 	});
 
-	const disposableGetExtensionAvailable = vscode.commands.registerCommand('tech-platform.getExtensionAvailable', () => {
-		getGlobalVars();
-		getExtensionAvailable();		
+	const globalVars = new GlobalVars();
+	const globalVarsProvider = vscode.window.createTreeView('vk-tp.globalVars', {
+		treeDataProvider: globalVars
 	});
+	globalVars.refresh();
+
+	const extensionAvailable = new ExtensionAvailable();
+	const extensionAvailableProvider = vscode.window.createTreeView('vk-tp.extension', {
+		treeDataProvider: extensionAvailable
+	});
+	extensionAvailable.refresh();
 
 
 	context.subscriptions.push(disposable);
 	context.subscriptions.push(disposableCheckConnection);
-	context.subscriptions.push(disposableGetExtensionAvailable);
 }
 
 // This method is called when your extension is deactivated

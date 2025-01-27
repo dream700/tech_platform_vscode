@@ -15,6 +15,9 @@ const defaultLoading = {
 };
 
 export class ExtensionAvailable extends Loadable<typeof defaultLoading> implements vscode.TreeDataProvider<Extension> {
+    private _onDidChangeTreeData: vscode.EventEmitter<Extension | undefined | void> = new vscode.EventEmitter<Extension | undefined | void>();
+    readonly onDidChangeTreeData: vscode.Event<Extension | undefined | void> = this._onDidChangeTreeData.event;
+
     extensions: Extension[] = [];
     constructor() {
         super();
@@ -32,6 +35,10 @@ export class ExtensionAvailable extends Loadable<typeof defaultLoading> implemen
             let requiresItem = { name: pack };
             this.extensions.push(requiresItem);
         };
+    }
+
+    public refresh(): void {
+        this.loadExtensions().then(() => this._onDidChangeTreeData.fire());
     }
 
     static index: number = 0;
