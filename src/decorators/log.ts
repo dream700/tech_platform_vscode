@@ -35,7 +35,7 @@ export const log = (points = defaultLogPoint) =>
       throw error;
     } finally {
       if (points.includes("after")) {
-          defaultLog.append(`The method ${method.name} completed`);
+          defaultLog.appendLine(`The method ${method.name} completed`);
       }
     }
   });

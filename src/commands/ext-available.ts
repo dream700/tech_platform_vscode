@@ -28,7 +28,7 @@ export class ExtensionAvailable extends Loadable<typeof defaultLoading> implemen
     async loadExtensions() {
         const response = await fetch('http://em-user-api.service.cloudcore:10001/v1/extensions/available/');
         const data: any = await response.json();
-        for (var pack of data) {
+        for (const pack of data) {
             let requiresItem = { name: pack };
             this.extensions.push(requiresItem);
         };

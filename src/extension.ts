@@ -2,7 +2,7 @@
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
 import { IPingResType } from './providers.js';
-import { getExtensionAvailable } from './commands/ext-available-cmd';
+import { getExtensionAvailable } from './commands/ext-available.js';
 import { getGlobalVars } from './commands/global-vars';
 
 // This method is called when your extension is activated

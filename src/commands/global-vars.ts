@@ -6,8 +6,8 @@ import { log } from '../decorators/log';
 
 export type TGlobalVars = {
     name: string;
-    value: string;
-    vars: TGlobalVars[] | undefined;
+    value?: string;
+    vars?: TGlobalVars[] | undefined;
 };
 
 const defaultLoading = {
@@ -29,8 +29,26 @@ export class GlobalVars extends Loadable<typeof defaultLoading> implements vscod
     async loadGlobalVars() {
         const response = await fetch('http://em-user-api.service.cloudcore:10001/v1/global_vars/');
         const data: any = await response.json();
-        this.globalVars = data;
+        this.globalVars = this.parseJson(data);
     }
+
+private parseJson(json: any, parentLabel: string = 'Root'): TGlobalVars[] {
+        const items: TGlobalVars[] = [];
+        if (typeof json === 'object' && json !== null) {
+            for (const key in json) {
+                const value = json[key];
+                const item: TGlobalVars = { name: key };
+                if (typeof value === 'object' && value !== null) {
+                    item.vars = this.parseJson(value, key);
+                } else {
+                    item.name += `: ${value}`;
+                }
+                items.push(item);
+            }
+        }
+        return items;
+    }
+
 
     static index: number = 0;
     public getTreeItem(element: TGlobalVars): vscode.TreeItem {
@@ -50,7 +68,7 @@ export class GlobalVars extends Loadable<typeof defaultLoading> implements vscod
     }
     public getChildren(element?: TGlobalVars): TGlobalVars[] {
         if (element === undefined) {
-            return [ {name: 'GLOBAL VARS', value : '', vars: this.globalVars } ];
+            return this.globalVars;
         }
         if (element.vars) {
             return element.vars;
