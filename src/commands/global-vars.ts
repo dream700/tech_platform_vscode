@@ -3,22 +3,24 @@ import { loadable, Loadable } from '../decorators/loadable';
 import { errorHandle } from '../decorators/errorHandle';
 import { successfullyNotify } from '../decorators/successfully';
 import { log } from '../decorators/log';
+import { TJson, parseJson } from '../helpers/json';
 
-type TGlobalVars = {
-    name: string;
-    value?: string;
-    vars?: TGlobalVars[] | undefined;
-};
+
+// type TGlobalVars  = {
+//     name: string;
+//     value?: string;
+//     array?: TGlobalVars[] | undefined;
+// };
 
 const defaultLoading = {
     globalvars: false
 };
 
-export class GlobalVars extends Loadable<typeof defaultLoading> implements vscode.TreeDataProvider<TGlobalVars> {
-    private _onDidChangeTreeData: vscode.EventEmitter<TGlobalVars | undefined | void> = new vscode.EventEmitter<TGlobalVars | undefined | void>();
-    readonly onDidChangeTreeData: vscode.Event<TGlobalVars | undefined | void> = this._onDidChangeTreeData.event;
+export class GlobalVars extends Loadable<typeof defaultLoading> implements vscode.TreeDataProvider<TJson<string>> {
+    private _onDidChangeTreeData: vscode.EventEmitter<TJson<string> | undefined | void> = new vscode.EventEmitter<TJson<string> | undefined | void>();
+    readonly onDidChangeTreeData: vscode.Event<TJson<string> | undefined | void> = this._onDidChangeTreeData.event;
 
-    globalVars: TGlobalVars[] = [];
+    globalVars: TJson<string>[] = [];
 
     constructor() {
         super();
@@ -32,51 +34,36 @@ export class GlobalVars extends Loadable<typeof defaultLoading> implements vscod
     async loadGlobalVars() {
         const response = await fetch('http://em-user-api.service.cloudcore:10001/v1/global_vars/');
         const data: any = await response.json();
-        this.globalVars = this.parseJson(data);
+        this.globalVars = parseJson(data);
     }
-    private parseJson(json: any, parentLabel: string = 'Root'): TGlobalVars[] {
-        const items: TGlobalVars[] = [];
-        if (typeof json === 'object' && json !== null) {
-            for (const key in json) {
-                const value = json[key];
-                const item: TGlobalVars = { name: key };
-                if (typeof value === 'object' && value !== null) {
-                    item.vars = this.parseJson(value, key);
-                } else {
-                    item.name += `: ${value}`;
-                }
-                items.push(item);
-            }
-        }
-        return items;
-    }
+
 
     public refresh(): void {
-        this.loadGlobalVars().then(() => this._onDidChangeTreeData.fire());
-    }
+        this.loadGlobalVars().then(() => this._onDidChangeTreeData.fire())
+            .then(() => console.log('Global vars refreshed'));
+    };
+
 
     static index: number = 0;
-    public getTreeItem(element: TGlobalVars): vscode.TreeItem {
+    public getTreeItem(element: TJson<string>): vscode.TreeItem {
         const treeItem: vscode.TreeItem = {
-            label: element.name
+            label: `${element.name} : ${element.value}`
         };
 
         treeItem.id = element.name + GlobalVars.index.toString();
         GlobalVars.index++;
-        // if (element.name?.endsWith("GLOBAL")) {
-        //     treeItem.contextValue = "root";
-        // } else {
-        //     treeItem.contextValue = "extension";
-        // }
-        treeItem.collapsibleState = element.vars ? vscode.TreeItemCollapsibleState.Collapsed : vscode.TreeItemCollapsibleState.None;
+        if (element.name.endsWith("GLOBAL")) {
+            treeItem.label = "GLOBAL";
+        }
+        treeItem.collapsibleState = element.array ? vscode.TreeItemCollapsibleState.Collapsed : vscode.TreeItemCollapsibleState.None;
         return treeItem;
     }
-    public getChildren(element?: TGlobalVars): TGlobalVars[] {
+    public getChildren(element?: TJson<string>): TJson<string>[] {
         if (element === undefined) {
             return this.globalVars;
         }
-        if (element.vars) {
-            return element.vars;
+        if (element.array) {
+            return element.array;
         }
         return [];
     }

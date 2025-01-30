@@ -3,6 +3,7 @@ import { loadable, Loadable } from '../decorators/loadable';
 import { errorHandle } from '../decorators/errorHandle';
 import { successfullyNotify } from '../decorators/successfully';
 import { log } from '../decorators/log';
+import { ExtIndexProvider } from '../providers/ext-index';
 
 export type Extension = {
     name: string;
@@ -38,7 +39,11 @@ export class ExtensionAvailable extends Loadable<typeof defaultLoading> implemen
     }
 
     public refresh(): void {
-        this.loadExtensions().then(() => this._onDidChangeTreeData.fire());
+        this.loadExtensions().then(() => this._onDidChangeTreeData.fire())
+        .then(() => {
+            const extIndex = new ExtIndexProvider();
+            console.log('Extensions index download')}
+        );
     }
 
     static index: number = 0;
