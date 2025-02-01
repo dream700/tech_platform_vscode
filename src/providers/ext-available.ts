@@ -3,19 +3,15 @@ import { loadable, Loadable } from '../decorators/loadable';
 import { errorHandle } from '../decorators/errorHandle';
 import { successfullyNotify } from '../decorators/successfully';
 import { log } from '../decorators/log';
-import { ExtIndexProvider } from '../providers/ext-index';
-
-export type Extension = {
-    name: string;
-    version?: string;
-    extensions?: Extension[] | undefined;
-};
+import { ExtIndexProvider } from './ext-index';
+import { TJson } from '../helpers/json';
+import { Extension } from './extension';
 
 const defaultLoading = {
     extensions: false,
 };
 
-export class ExtensionAvailable extends Loadable<typeof defaultLoading> implements vscode.TreeDataProvider<Extension> {
+export class ExtensionAvailableProvider extends Loadable<typeof defaultLoading> implements vscode.TreeDataProvider<Extension> {
     private _onDidChangeTreeData: vscode.EventEmitter<Extension | undefined | void> = new vscode.EventEmitter<Extension | undefined | void>();
     readonly onDidChangeTreeData: vscode.Event<Extension | undefined | void> = this._onDidChangeTreeData.event;
 
@@ -30,20 +26,23 @@ export class ExtensionAvailable extends Loadable<typeof defaultLoading> implemen
     @successfullyNotify("Available extensions loaded successfully")
     @log()
     async loadExtensions() {
+        this.extensions = [];
         const response = await fetch('http://em-user-api.service.cloudcore:10001/v1/extensions/available/');
         const data: any = await response.json();
         for (const pack of data) {
-            let requiresItem = { name: pack };
+            let requiresItem = new Extension(pack);
             this.extensions.push(requiresItem);
         };
     }
 
-    public refresh(): void {
+    public refresh(globalVars: TJson<string>[]): Promise<void> {
         this.loadExtensions().then(() => this._onDidChangeTreeData.fire())
         .then(() => {
             const extIndex = new ExtIndexProvider();
-            console.log('Extensions index download')}
-        );
+            console.log('Extensions index download');
+        return Promise.resolve();}
+        ).catch((err: any) => Promise.reject(err));
+        return Promise.resolve();
     }
 
     static index: number = 0;
@@ -51,28 +50,18 @@ export class ExtensionAvailable extends Loadable<typeof defaultLoading> implemen
         const treeItem: vscode.TreeItem = {
             label: element.name
         };
-        treeItem.id = element.name + ExtensionAvailable.index.toString();
-        ExtensionAvailable.index++;
-        treeItem.collapsibleState = element.extensions ? vscode.TreeItemCollapsibleState.Collapsed : vscode.TreeItemCollapsibleState.None;
+        treeItem.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
+        treeItem.id = element.name + ExtensionAvailableProvider.index.toString();
+        ExtensionAvailableProvider.index++;
         return treeItem;
     }
-    public getChildren(element?: Extension): Extension[] {
+    public getChildren(element: Extension): Extension[] | undefined {
         if (element === undefined) {
             return this.extensions;
         }
-        if (element.extensions) {
-            return element.extensions;
-        }
+        if (element.uuid === undefined) {
+            return element.getExtensions();
+        }        
         return [];
     }
-}
-
-export function getExtensionAvailable() {
-    const extensionAvailable = new ExtensionAvailable();
-    extensionAvailable.loadExtensions().then(() => {
-        const treeDataProvider = vscode.window.createTreeView('vk-tp.extension', {
-            treeDataProvider: extensionAvailable
-        });
-        treeDataProvider.reveal(extensionAvailable.extensions![0]);
-    });
 }

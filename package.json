@@ -18,6 +18,14 @@
         "title": "Test TP extension"
       },
       {
+        "command": "tech-platform.RefreshStands",
+        "title": "Refresh data from stands"
+      },
+      {
+        "command": "tech-platform.copyGlobalVarValue",
+        "title": "Копировать в буфер обмена"
+      },
+      {
         "command": "tech-platform.checkConnection",
         "title": "Check connection to Personal stand (ping em-user-api.service.cloudcore)"
       },
@@ -48,7 +56,22 @@
           "contextualTitle": "VK Tech Platform extension explorer"
         }
       ]
-    }
+    },
+    "menus": {
+      "view/item/context": [
+          {
+              "command": "tech-platform.RefreshGloabalVars",
+              "when": "view == vk-tp.globalVars && vk-tp.globalVars",
+              "group": "navigation"
+          },
+          {
+            "command": "tech-platform.copyGlobalVarValue",
+            "when": "view == vk-tp.globalVars && vk-tp.globalVars",
+            "group": "navigation"
+          }
+      ]
+  }
+
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",

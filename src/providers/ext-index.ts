@@ -18,7 +18,7 @@ export class ExtIndexProvider extends Loadable<typeof defaultLoading> {
 
     constructor() {
         super();
-        this.downloadChecksumExtIndex().then(() => this.downloadmExtIndex());
+        this.downloadChecksumExtIndex();
         this.md5sum = "";
     }
 

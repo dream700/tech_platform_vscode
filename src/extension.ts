@@ -2,8 +2,8 @@
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
 import { IPingResType } from './providers.js';
-import { ExtensionAvailable } from './commands/ext-available.js';
-import { GlobalVars } from './commands/global-vars';
+import { ExtensionAvailableProvider } from './providers/ext-available.js';
+import { GlobalVarsProvider } from './providers/global-vars.js';
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -16,12 +16,13 @@ export function activate(context: vscode.ExtensionContext) {
 	// The command has been defined in the package.json file
 	// Now provide the implementation of the command with registerCommand
 	// The commandId parameter must match the command field in package.json
-	const disposable = vscode.commands.registerCommand('tech-platform.helloWorld', () => {
+	const disposable = vscode.commands.registerCommand('tech-platform.helloWorld', (item) => {
 		// The code you place here will be executed every time your command is executed
 		// Display a message box to the user
 		vscode.window.showInformationMessage('Hello World from Tech Platform from VS Code!');
 	});
-	
+
+
 	const disposableCheckConnection = vscode.commands.registerCommand('tech-platform.checkConnection', () => {
 		checkConnectionOnStand().then(
 			res => {
@@ -38,17 +39,24 @@ export function activate(context: vscode.ExtensionContext) {
 		);
 	});
 
-	const globalVars = new GlobalVars();
+	const globalVars = new GlobalVarsProvider();
 	const globalVarsProvider = vscode.window.createTreeView('vk-tp.globalVars', {
 		treeDataProvider: globalVars
 	});
-	globalVars.refresh();
-
-	const extensionAvailable = new ExtensionAvailable();
+	const extensionAvailable = new ExtensionAvailableProvider();
 	const extensionAvailableProvider = vscode.window.createTreeView('vk-tp.extension', {
 		treeDataProvider: extensionAvailable
 	});
-	extensionAvailable.refresh();
+	globalVars.refresh().then((gv) => 
+		extensionAvailable.refresh(gv)
+	);
+
+	context.subscriptions.push(
+		vscode.commands.registerCommand('tech-platform.RefreshStands', () => {
+			globalVars.refresh().then(() => extensionAvailable.refresh());
+		})
+	);
+
 
 
 	context.subscriptions.push(disposable);
