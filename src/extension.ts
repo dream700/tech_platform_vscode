@@ -3,7 +3,7 @@
 import * as vscode from 'vscode';
 import { IPingResType } from './providers.js';
 import { ExtensionAvailableProvider } from './providers/ext-available.js';
-import { GlobalVarsProvider } from './providers/global-vars.js';
+import { GlobalVarsProvider } from './providers/globalvars.js';
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -40,25 +40,22 @@ export function activate(context: vscode.ExtensionContext) {
 	});
 
 	const globalVars = new GlobalVarsProvider();
+	vscode.window.registerTreeDataProvider('vk-tp.extension', globalVars);
 	const globalVarsProvider = vscode.window.createTreeView('vk-tp.globalVars', {
 		treeDataProvider: globalVars
 	});
 	const extensionAvailable = new ExtensionAvailableProvider();
+	vscode.window.registerTreeDataProvider('vk-tp.extension', extensionAvailable);
 	const extensionAvailableProvider = vscode.window.createTreeView('vk-tp.extension', {
 		treeDataProvider: extensionAvailable
 	});
-	globalVars.refresh().then((gv) => 
-		extensionAvailable.refresh(gv)
-	);
+	extensionAvailable.refresh(globalVars.refresh());
 
 	context.subscriptions.push(
 		vscode.commands.registerCommand('tech-platform.RefreshStands', () => {
-			globalVars.refresh().then(() => extensionAvailable.refresh());
+			extensionAvailable.refresh(globalVars.refresh());
 		})
 	);
-
-
-
 	context.subscriptions.push(disposable);
 	context.subscriptions.push(disposableCheckConnection);
 }

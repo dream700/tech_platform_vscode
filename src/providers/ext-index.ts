@@ -31,8 +31,8 @@ export class ExtIndexProvider extends Loadable<typeof defaultLoading> {
         const response = await fetch(this.nexusApiUrl);
         const data: any = await response.json();
         resp = parseJson(data);
-        this.md5sum = findValueByName(resp, "md5");
-        this.indexURL = findValueByName(resp, "downloadUrl");
+        findValueByName(resp, "md5")?.then((data) => this.md5sum=data);
+        findValueByName(resp, "downloadUrl")?.then((data) => this.indexURL=data);
     }
     @loadable("extIndex")
     @errorHandle()

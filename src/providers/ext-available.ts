@@ -37,11 +37,12 @@ export class ExtensionAvailableProvider extends Loadable<typeof defaultLoading> 
 
     public refresh(globalVars: TJson<string>[]): Promise<void> {
         this.loadExtensions().then(() => this._onDidChangeTreeData.fire())
-        .then(() => {
-            const extIndex = new ExtIndexProvider();
-            console.log('Extensions index download');
-        return Promise.resolve();}
-        ).catch((err: any) => Promise.reject(err));
+            .then(() => {
+                const extIndex = new ExtIndexProvider();
+                console.log('Extensions index download');
+                return Promise.resolve();
+            }
+            ).catch((err: any) => Promise.reject(err));
         return Promise.resolve();
     }
 
@@ -50,18 +51,21 @@ export class ExtensionAvailableProvider extends Loadable<typeof defaultLoading> 
         const treeItem: vscode.TreeItem = {
             label: element.name
         };
-        treeItem.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
+        if (element.version !== undefined) {
+            treeItem.label = ` v${element.version}`;
+        }
+        treeItem.collapsibleState = element.version ? vscode.TreeItemCollapsibleState.None : vscode.TreeItemCollapsibleState.Collapsed;
         treeItem.id = element.name + ExtensionAvailableProvider.index.toString();
         ExtensionAvailableProvider.index++;
         return treeItem;
     }
-    public getChildren(element: Extension): Extension[] | undefined {
+    public getChildren(element: Extension): Thenable<Extension[]> | undefined {
         if (element === undefined) {
-            return this.extensions;
+            return Promise.resolve(this.extensions);
         }
         if (element.uuid === undefined) {
-            return element.getExtensions();
-        }        
-        return [];
+            return element.getExtensionInfo();
+        }
+        Promise.resolve([]);
     }
 }

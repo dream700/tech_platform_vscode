@@ -60,11 +60,6 @@
     "menus": {
       "view/item/context": [
           {
-              "command": "tech-platform.RefreshGloabalVars",
-              "when": "view == vk-tp.globalVars && vk-tp.globalVars",
-              "group": "navigation"
-          },
-          {
             "command": "tech-platform.copyGlobalVarValue",
             "when": "view == vk-tp.globalVars && vk-tp.globalVars",
             "group": "navigation"
