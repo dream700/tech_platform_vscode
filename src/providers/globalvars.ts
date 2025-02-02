@@ -1,15 +1,16 @@
 import * as vscode from 'vscode';
 import { TJson } from '../helpers/json';
-import { dsGlobalVarsProvider } from '../datastore/dsGlobalVars';
+import { dsGlobalVars } from '../datastore/dsGlobalVars';
+import { log } from '../decorators/log';
 
 export class GlobalVarsProvider implements vscode.TreeDataProvider<TJson<string>> {
     private _onDidChangeTreeData: vscode.EventEmitter<TJson<string> | undefined | void> = new vscode.EventEmitter<TJson<string> | undefined | void>();
     readonly onDidChangeTreeData: vscode.Event<TJson<string> | undefined | void> = this._onDidChangeTreeData.event;
 
-    globalVars: dsGlobalVarsProvider;
+    globalVars: dsGlobalVars;
 
     constructor() {
-        this.globalVars = new dsGlobalVarsProvider();
+        this.globalVars = new dsGlobalVars();
         const copyCommand = vscode.commands.registerCommand('tech-platform.copyGlobalVarValue', (item: TJson<string>) => {
             if (item) {
                 // Копируем текст элемента в буфер обмена
@@ -19,10 +20,12 @@ export class GlobalVarsProvider implements vscode.TreeDataProvider<TJson<string>
             }
         });
     }
-
-    public refresh(): TJson<string>[] {
-        this.globalVars.loadGlobalVars().then(() => this._onDidChangeTreeData.fire());        ;
-        return this.globalVars.getGlobalVars();
+    @log()
+    public refresh(): Promise<TJson<string>[]> {
+        return new Promise((resolve) => {
+            this.globalVars.loadGlobalVars().then(() => this._onDidChangeTreeData.fire());        ;
+            resolve(this.globalVars.getGlobalVars());
+        });
     };
 
 

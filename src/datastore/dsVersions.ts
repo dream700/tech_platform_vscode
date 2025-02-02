@@ -1,10 +1,7 @@
-import * as vscode from 'vscode';
 import { TJson, parseJson } from '../helpers/json';
 
 
-export class VersionsProvider {
-    private _onDidChangeTreeData: vscode.EventEmitter<TJson<string> | undefined | void> = new vscode.EventEmitter<TJson<string> | undefined | void>();
-    readonly onDidChangeTreeData: vscode.Event<TJson<string> | undefined | void> = this._onDidChangeTreeData.event;
+export class dsVersions {
 
     versions: TJson<string>[] = [];
     urlRepository: string;
@@ -15,7 +12,7 @@ export class VersionsProvider {
         this.extName = extName;
     }
     public loadExtVersionInfo(): Promise<TJson<string>[]> {
-        return new Promise((resolve, error) => {
+        return new Promise((resolve, reject) => {
             fetch(`${this.urlRepository}/v1/extensions/?name=${this.extName}`)
                 .then(
                     response => {
@@ -27,8 +24,7 @@ export class VersionsProvider {
                         this.versions = parseJson(data);
                         resolve(this.versions);
                     })
-                .catch(error);
+                .catch(reject);
         });
     }
-
 }

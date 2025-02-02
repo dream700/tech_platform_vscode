@@ -49,11 +49,11 @@ export function activate(context: vscode.ExtensionContext) {
 	const extensionAvailableProvider = vscode.window.createTreeView('vk-tp.extension', {
 		treeDataProvider: extensionAvailable
 	});
-	extensionAvailable.refresh(globalVars.refresh());
+	globalVars.refresh().then(() => extensionAvailable.refresh());
 
 	context.subscriptions.push(
 		vscode.commands.registerCommand('tech-platform.RefreshStands', () => {
-			extensionAvailable.refresh(globalVars.refresh());
+			extensionAvailable.refresh();
 		})
 	);
 	context.subscriptions.push(disposable);

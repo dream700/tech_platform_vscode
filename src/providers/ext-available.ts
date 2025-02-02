@@ -1,44 +1,25 @@
 import * as vscode from 'vscode';
-import { loadable, Loadable } from '../decorators/loadable';
-import { errorHandle } from '../decorators/errorHandle';
-import { successfullyNotify } from '../decorators/successfully';
 import { log } from '../decorators/log';
-import { ExtIndexProvider } from './ext-index';
+import { dsExtensionsIndexJson } from '../datastore/ext-index';
 import { TJson } from '../helpers/json';
-import { Extension } from './extension';
+import { dsExtension } from '../datastore/dsExtension';
+import { dsExtensionAvailable } from '../datastore/dsExtAvailable';
 
-const defaultLoading = {
-    extensions: false,
-};
+export class ExtensionAvailableProvider implements vscode.TreeDataProvider<dsExtension> {
+    private _onDidChangeTreeData: vscode.EventEmitter<dsExtension | undefined | void> = new vscode.EventEmitter<dsExtension | undefined | void>();
+    readonly onDidChangeTreeData: vscode.Event<dsExtension | undefined | void> = this._onDidChangeTreeData.event;
 
-export class ExtensionAvailableProvider extends Loadable<typeof defaultLoading> implements vscode.TreeDataProvider<Extension> {
-    private _onDidChangeTreeData: vscode.EventEmitter<Extension | undefined | void> = new vscode.EventEmitter<Extension | undefined | void>();
-    readonly onDidChangeTreeData: vscode.Event<Extension | undefined | void> = this._onDidChangeTreeData.event;
+    extensions: dsExtensionAvailable;
 
-    extensions: Extension[] = [];
     constructor() {
-        super();
-        this.loading = defaultLoading;
+        this.extensions = new dsExtensionAvailable();
     }
 
-    @loadable("extensions")
-    @errorHandle()
-    @successfullyNotify("Available extensions loaded successfully")
     @log()
-    async loadExtensions() {
-        this.extensions = [];
-        const response = await fetch('http://em-user-api.service.cloudcore:10001/v1/extensions/available/');
-        const data: any = await response.json();
-        for (const pack of data) {
-            let requiresItem = new Extension(pack);
-            this.extensions.push(requiresItem);
-        };
-    }
-
-    public refresh(globalVars: TJson<string>[]): Promise<void> {
-        this.loadExtensions().then(() => this._onDidChangeTreeData.fire())
+    public refresh(): Promise<void> {
+        this.extensions.loadExtensions().then(() => this._onDidChangeTreeData.fire())
             .then(() => {
-                const extIndex = new ExtIndexProvider();
+                const extIndex = new dsExtensionsIndexJson();
                 console.log('Extensions index download');
                 return Promise.resolve();
             }
@@ -47,7 +28,7 @@ export class ExtensionAvailableProvider extends Loadable<typeof defaultLoading> 
     }
 
     static index: number = 0;
-    public getTreeItem(element: Extension): vscode.TreeItem {
+    public getTreeItem(element: dsExtension): vscode.TreeItem {
         const treeItem: vscode.TreeItem = {
             label: element.name
         };
@@ -55,13 +36,11 @@ export class ExtensionAvailableProvider extends Loadable<typeof defaultLoading> 
             treeItem.label = ` v${element.version}`;
         }
         treeItem.collapsibleState = element.version ? vscode.TreeItemCollapsibleState.None : vscode.TreeItemCollapsibleState.Collapsed;
-        treeItem.id = element.name + ExtensionAvailableProvider.index.toString();
-        ExtensionAvailableProvider.index++;
         return treeItem;
     }
-    public getChildren(element: Extension): Thenable<Extension[]> | undefined {
+    public getChildren(element: dsExtension): Thenable<dsExtension[]> | undefined {
         if (element === undefined) {
-            return Promise.resolve(this.extensions);
+            return Promise.resolve(this.extensions.getExtensions());
         }
         if (element.uuid === undefined) {
             return element.getExtensionInfo();
