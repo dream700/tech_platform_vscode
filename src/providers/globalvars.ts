@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import { TJson } from '../helpers/json';
 import { dsGlobalVars } from '../datastore/dsGlobalVars';
 import { log } from '../decorators/log';
+import { GlobalVars } from '../extension';
 
 export class GlobalVarsProvider implements vscode.TreeDataProvider<TJson<string>> {
     private _onDidChangeTreeData: vscode.EventEmitter<TJson<string> | undefined | void> = new vscode.EventEmitter<TJson<string> | undefined | void>();
@@ -20,12 +21,15 @@ export class GlobalVarsProvider implements vscode.TreeDataProvider<TJson<string>
             }
         });
     }
-    @log()
-    public refresh(): Promise<TJson<string>[]> {
+    // @log()
+    public refresh(): Promise<void> {
         return new Promise((resolve) => {
-            this.globalVars.loadGlobalVars().then(() => this._onDidChangeTreeData.fire());        ;
-            resolve(this.globalVars.getGlobalVars());
-        });
+            this.globalVars.loadGlobalVars()
+                .then(() => {
+                    this._onDidChangeTreeData.fire();
+                    resolve();
+            });
+        });;
     };
 
 
@@ -45,7 +49,7 @@ export class GlobalVarsProvider implements vscode.TreeDataProvider<TJson<string>
     }
     public getChildren(element?: TJson<string>): Promise<TJson<string>[]> | TJson<string>[] {
         if (element === undefined) {
-            return this.globalVars.getGlobalVars();
+            return GlobalVars.getGlobalVars();
         }
         if (element.array) {
             return element.array;

@@ -1,21 +1,17 @@
+import { GlobalVars } from '../extension';
 import { TJson, parseJson } from '../helpers/json';
 
-export var globalVars: TJson<string>[] = [];
 
 export class dsGlobalVars {
 
-    public getGlobalVars(): TJson<string>[] {
-        return globalVars;
-    }
-
-    public loadGlobalVars(): Promise<TJson<string>[]> {
+    public loadGlobalVars(): Promise<void> {
         return new Promise((resolve, reject) => {
-            globalVars = [];
+            GlobalVars.init();
             fetch('http://em-user-api.service.cloudcore:10001/v1/global_vars/')
                 .then(response => response.json())
                 .then(data => {
-                    globalVars = parseJson(data);                        
-                    resolve(globalVars);
+                    GlobalVars.setGlobalVars(parseJson(data));                        
+                    resolve();
                 })
                 .catch(reject);
         });

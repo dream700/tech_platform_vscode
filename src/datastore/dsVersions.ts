@@ -13,7 +13,7 @@ export class dsVersions {
     }
     public loadExtVersionInfo(): Promise<TJson<string>[]> {
         return new Promise((resolve, reject) => {
-            fetch(`${this.urlRepository}/v1/extensions/?name=${this.extName}`)
+            fetch(`${this.urlRepository}/v1/extensions/?name=${this.extName}&sort_by=version`)
                 .then(
                     response => {
                         const data: any = response.json();

@@ -1,6 +1,6 @@
+import { GlobalVars } from "../extension";
 import { findArrayByName, findValueByName, TJson } from "../helpers/json";
 import { dsVersions } from "./dsVersions";
-import { globalVars } from "./dsGlobalVars";
 
 export class dsExtension {
     uuid: string | undefined;
@@ -13,7 +13,7 @@ export class dsExtension {
     public getExtensionInfo(): Promise<dsExtension[]> {
         return new Promise<dsExtension[]>(resolve => {
             if (this.extensions === undefined) {
-                findArrayByName<string>(globalVars, "GLOBAL")?.then(res => {
+                findArrayByName<string>(GlobalVars.getGlobalVars(), "GLOBAL")?.then(res => {
                     findArrayByName<string>(res, "endpoints")?.then(res => {
                         findArrayByName<string>(res, "Repository")?.then(res => {
                             findValueByName(res, "user_api_url")?.then(res => {

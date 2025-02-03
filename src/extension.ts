@@ -4,6 +4,27 @@ import * as vscode from 'vscode';
 import { IPingResType } from './providers.js';
 import { ExtensionAvailableProvider } from './providers/ext-available.js';
 import { GlobalVarsProvider } from './providers/globalvars.js';
+import { HWsProvider } from './providers/hws.js';
+import { TJson } from './helpers/json.js';
+
+
+//const serverSetting = vscode.workspace.getConfiguration('yourPackageName').server;
+
+
+export class GlobalVars {
+
+	private static globalVars: TJson<string>[] = [];
+	static getGlobalVars(): TJson<string>[] {
+		return this.globalVars;
+	}
+	static setGlobalVars(value: TJson<string>[]) {
+		this.globalVars = value;
+	}
+
+	static init() {
+		this.globalVars = [];
+	}
+}
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -49,13 +70,20 @@ export function activate(context: vscode.ExtensionContext) {
 	const extensionAvailableProvider = vscode.window.createTreeView('vk-tp.extension', {
 		treeDataProvider: extensionAvailable
 	});
-	globalVars.refresh().then(() => extensionAvailable.refresh());
+	const hws = new HWsProvider();
+	vscode.window.registerTreeDataProvider('vk-tp.HWs',hws);
+	const hwsProvider = vscode.window.createTreeView('vk-tp.HWs', {
+		treeDataProvider: hws
+	});
+	globalVars.refresh()
+		.then(() => extensionAvailable.refresh().then(() => hws.refresh()));
+
 
 	context.subscriptions.push(
 		vscode.commands.registerCommand('tech-platform.RefreshStands', () => {
 			extensionAvailable.refresh();
 		})
-	);
+	);	
 	context.subscriptions.push(disposable);
 	context.subscriptions.push(disposableCheckConnection);
 }

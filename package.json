@@ -26,6 +26,10 @@
         "title": "Копировать в буфер обмена"
       },
       {
+        "command": "tech-platform.InstallExtension",
+        "title": "Install extension"
+      },
+      {
         "command": "tech-platform.checkConnection",
         "title": "Check connection to Personal stand (ping em-user-api.service.cloudcore)"
       },
@@ -46,9 +50,14 @@
     "views": {
       "tech-platform": [
         {
+          "id": "vk-tp.HWs",
+          "name": "HW list",
+          "contextualTitle": "HW instance explorer"
+        },
+        {
           "id": "vk-tp.globalVars",
           "name": "GLOBAL VARS",
-          "contextualTitle": "VK Tech Platform extension explorer"
+          "contextualTitle": "GLOBAL vars instance explorer"
         },
         {
           "id": "vk-tp.extension",
@@ -62,6 +71,11 @@
           {
             "command": "tech-platform.copyGlobalVarValue",
             "when": "view == vk-tp.globalVars && vk-tp.globalVars",
+            "group": "navigation"
+          },
+          {
+            "command": "tech-platform.InstallExtension",
+            "when": "view == vk-tp.extension && vk-tp.extension",
             "group": "navigation"
           }
       ]

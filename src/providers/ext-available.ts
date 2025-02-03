@@ -13,6 +13,16 @@ export class ExtensionAvailableProvider implements vscode.TreeDataProvider<dsExt
 
     constructor() {
         this.extensions = new dsExtensionAvailable();
+        const copyCommand = vscode.commands.registerCommand('tech-platform.InstallExtension', (item: dsExtension) => {
+            if (item && item.uuid === undefined) {
+                vscode.window.showInformationMessage(`Select version extension ${item.name} for installing.`,"Error");
+                return;
+            }
+            if (item && item.uuid !== undefined) {
+                vscode.window.showInformationMessage(`Installing Extension: ${item.name} ${item.version}`);
+            }
+        });
+
     }
 
     @log()
