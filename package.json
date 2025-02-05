@@ -70,7 +70,7 @@
       "view/item/context": [
           {
             "command": "tech-platform.copyGlobalVarValue",
-            "when": "view == vk-tp.globalVars && vk-tp.globalVars",
+            "when": "(view == vk-tp.globalVars && vk-tp.globalVars) || (view==vk-tp.HWs)",
             "group": "navigation"
           },
           {

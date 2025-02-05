@@ -49,7 +49,7 @@ export class GlobalVarsProvider implements vscode.TreeDataProvider<TJson<string>
     }
     public getChildren(element?: TJson<string>): Promise<TJson<string>[]> | TJson<string>[] {
         if (element === undefined) {
-            return GlobalVars.getGlobalVars();
+            return GlobalVars.GetGlobalVarsToArray();
         }
         if (element.array) {
             return element.array;

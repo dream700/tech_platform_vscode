@@ -1,5 +1,5 @@
 import { GlobalVars } from "../extension";
-import { findArrayByName, findValueByName, TJson } from "../helpers/json";
+import { findValueByName, objectToMap } from "../helpers/json";
 import { dsVersions } from "./dsVersions";
 
 export class dsExtension {
@@ -13,33 +13,25 @@ export class dsExtension {
     public getExtensionInfo(): Promise<dsExtension[]> {
         return new Promise<dsExtension[]>(resolve => {
             if (this.extensions === undefined) {
-                findArrayByName<string>(GlobalVars.getGlobalVars(), "GLOBAL")?.then(res => {
-                    findArrayByName<string>(res, "endpoints")?.then(res => {
-                        findArrayByName<string>(res, "Repository")?.then(res => {
-                            findValueByName(res, "user_api_url")?.then(res => {
-                                let v = new dsVersions(res, this.name);
-                                v.loadExtVersionInfo().then(res => {
-                                    this.extensions = [];
-                                    for (const item of res) {
-                                        if (item.array !== undefined) {
-                                            findValueByName(item.array, "name")?.then(res => {
-                                                let extension = new dsExtension(res);
-                                                return extension;
-                                            }
-                                            ).then(extension =>
-                                                findValueByName(item.array, "version")?.then(res => extension.version = res)
-                                                    .then(() => findValueByName(item.array, "uuid")?.then(res => extension.uuid = res)
-                                                        .then(() => {
-                                                            this.extensions?.push(extension);
-                                                            resolve(this.extensions!);
-                                                        })));
-                                        }
-                                    }
-                                });
+                const urlNodeManager = GlobalVars.globalVarsEndPoints.get("Repository");
+                if (urlNodeManager) {
+                    const user_api_url = urlNodeManager.get("user_api_url");
+                    if (user_api_url) {
+                        let v = new dsVersions();
+                        v.loadExtVersionInfo(user_api_url, this.name).then(res => {
+                            this.extensions = [];
+                            res.forEach((value: Map<any, any>, key: string) => {
+                                if (value.has("name")) {
+                                    let extension = new dsExtension(value.get("name"));
+                                    extension.uuid = value.get("uuid");
+                                    extension.version = value.get("version");
+                                    this.extensions?.push(extension);
+                                    resolve(this.extensions!);
+                                }
                             });
                         });
-                    });
-                });
+                    }
+                }
             }
         });
     }

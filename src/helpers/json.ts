@@ -45,12 +45,12 @@ export function findValueByName<T>(vars: TJson<T>[] | undefined, targetName: str
     return Promise.reject();
 }
 
-export function parseJson(json: any, parentLabel: string = 'Root'): TJson<string>[] {
-    const items: TJson<string>[] = [];
+export function parseJson<T>(json: any, parentLabel: string = 'Root'): TJson<T>[] {
+    const items: TJson<T>[] = [];
     if (typeof json === 'object' && json !== null) {
         for (const key in json) {
             const value = json[key];
-            const item: TJson<string> = { key: key };
+            const item: TJson<T> = { key: key };
             if (typeof value === 'object' && value !== null) {
                 item.array = parseJson(value, key);
             } else {
@@ -62,4 +62,14 @@ export function parseJson(json: any, parentLabel: string = 'Root'): TJson<string
     }
     return items;
 }
+
+type Mapping = { [k: string]: number | string | boolean | null | Mapping };
+export const objectToMap = (obj: Mapping) => {
+    let map = new Map();
+    for (const [k, v] of Object.entries(obj)) {
+        const isNativeObj = typeof v === "object" && v !== null;
+        map.set(k, isNativeObj ? objectToMap(v) : v);
+    }
+    return map;
+};
 

@@ -5,7 +5,7 @@ import { IPingResType } from './providers.js';
 import { ExtensionAvailableProvider } from './providers/ext-available.js';
 import { GlobalVarsProvider } from './providers/globalvars.js';
 import { HWsProvider } from './providers/hws.js';
-import { TJson } from './helpers/json.js';
+import { objectToMap, TJson } from './helpers/json.js';
 
 
 //const serverSetting = vscode.workspace.getConfiguration('yourPackageName').server;
@@ -13,16 +13,41 @@ import { TJson } from './helpers/json.js';
 
 export class GlobalVars {
 
-	private static globalVars: TJson<string>[] = [];
-	static getGlobalVars(): TJson<string>[] {
-		return this.globalVars;
+	private static _globalVarsExtensions: Map<any, any> = new Map<any, any>();	
+	public static get globalVarsExtensions(): Map<any, any> {
+		return GlobalVars._globalVarsExtensions;
 	}
-	static setGlobalVars(value: TJson<string>[]) {
-		this.globalVars = value;
+	public static set globalVarsExtensions(value: Map<any, any>) {
+		GlobalVars._globalVarsExtensions = value;
+	}
+	private static _globalVarsEndPoints: Map<any, any> = new Map<any, any>();	
+	public static get globalVarsEndPoints(): Map<any, any> {
+		return GlobalVars._globalVarsEndPoints;
+	}
+	public static set globalVarsEndPoints(value: Map<any, any>) {
+		GlobalVars._globalVarsEndPoints = value;
+	}
+	private static globalVarsMap: Map<any,any> = new Map<any,any>();	
+
+	static getGlobalVars():Map<any,any> {
+		return this.globalVarsMap;
 	}
 
-	static init() {
-		this.globalVars = [];
+	static GetGlobalVarsToArray(): TJson<string>[] {
+		return Array.from(this.globalVarsMap) as unknown as TJson<string>[];
+	}
+
+	static setGlobalVars(value: any) {
+		let globalvars = objectToMap(value);
+		if (globalvars.has("GLOBAL")) {
+			this.globalVarsMap = globalvars.get("GLOBAL");
+			if (this.globalVarsMap.has("endpoints")) {
+				this.globalVarsEndPoints = this.globalVarsMap.get("endpoints");
+			}
+			if (this.globalVarsMap.has("extensions")) {
+				this.globalVarsExtensions = this.globalVarsMap.get("extensions");
+			}						
+		}
 	}
 }
 
@@ -110,3 +135,4 @@ export function checkConnection(host: string) {
 			});
 	});
 }
+

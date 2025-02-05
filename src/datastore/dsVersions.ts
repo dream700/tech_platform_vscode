@@ -1,19 +1,11 @@
-import { TJson, parseJson } from '../helpers/json';
+import { TJson, objectToMap, parseJson } from '../helpers/json';
 
 
 export class dsVersions {
 
-    versions: TJson<string>[] = [];
-    urlRepository: string;
-    extName: string;
-
-    constructor(urlRepository: string, extName: string) {
-        this.urlRepository = urlRepository;
-        this.extName = extName;
-    }
-    public loadExtVersionInfo(): Promise<TJson<string>[]> {
+    public loadExtVersionInfo(urlRepository: string, extName: string): Promise<Map<any, any>> {
         return new Promise((resolve, reject) => {
-            fetch(`${this.urlRepository}/v1/extensions/?name=${this.extName}&sort_by=version`)
+            fetch(`${urlRepository}/v1/extensions/?name=${extName}&sort_by=version`)
                 .then(
                     response => {
                         const data: any = response.json();
@@ -21,8 +13,9 @@ export class dsVersions {
                     })
                 .then(
                     data => {
-                        this.versions = parseJson(data);
-                        resolve(this.versions);
+                        // this.versions = parseJson(data);
+                        const versions = objectToMap(data);
+                        resolve(versions);
                     })
                 .catch(reject);
         });

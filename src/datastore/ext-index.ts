@@ -25,7 +25,7 @@ export class dsExtensionsIndexJson {
             fetch(this.nexusApiUrl)
                 .then((response) => response.json())
                 .then((data) => {
-                    const resp = parseJson(data);
+                    const resp = parseJson<string>(data);
                     findValueByName(resp, "md5")?.then((data) => this.md5sum = data);
                     findValueByName(resp, "downloadUrl")?.then((data) => this.indexURL = data);
                     resolve();

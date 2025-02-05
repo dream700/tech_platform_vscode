@@ -1,10 +1,11 @@
 import * as vscode from 'vscode';
 import { TJson } from '../helpers/json';
 import { dsNodeManger } from '../datastore/dsNodeManager';
+import { HW } from '../datastore/dsHWs';
 
-export class HWsProvider implements vscode.TreeDataProvider<TJson<string>> {
-    private _onDidChangeTreeData: vscode.EventEmitter<TJson<string> | undefined | void> = new vscode.EventEmitter<TJson<string> | undefined | void>();
-    readonly onDidChangeTreeData: vscode.Event<TJson<string> | undefined | void> = this._onDidChangeTreeData.event;
+export class HWsProvider implements vscode.TreeDataProvider<TJson<HW>> {
+    private _onDidChangeTreeData: vscode.EventEmitter<TJson<HW> | undefined | void> = new vscode.EventEmitter<TJson<HW> | undefined | void>();
+    readonly onDidChangeTreeData: vscode.Event<TJson<HW> | undefined | void> = this._onDidChangeTreeData.event;
 
     hws: dsNodeManger = new dsNodeManger();
 
@@ -19,7 +20,7 @@ export class HWsProvider implements vscode.TreeDataProvider<TJson<string>> {
     }
 
     static index: number = 0;
-    public getTreeItem(element: TJson<string>): vscode.TreeItem {
+    public getTreeItem(element: TJson<HW>): vscode.TreeItem {
         const treeItem: vscode.TreeItem = {
             label: `${element.key} : ${element.value}`
         };
@@ -29,7 +30,7 @@ export class HWsProvider implements vscode.TreeDataProvider<TJson<string>> {
         treeItem.collapsibleState = element.array ? vscode.TreeItemCollapsibleState.Collapsed : vscode.TreeItemCollapsibleState.None;
         return treeItem;
     }
-    public getChildren(element: TJson<string>): TJson<string>[] | undefined{
+    public getChildren(element: TJson<HW>): TJson<HW>[] | undefined{
         if (element === undefined) {
             return this.hws.hws();
         }
