@@ -10,20 +10,10 @@ export function findArrayByName<T>(vars: TJson<T>[] | undefined, targetName: str
             if (varItem.key === targetName) {
                 return Promise.resolve(varItem.array);
             }
-            // if (varItem.array) {
-            //     const foundValue = findArrayByName(varItem.array, targetName).then((res) => 
-            //         {if (res) {
-            //             return Promise.resolve(res);    
-            //         }});
-            //     if (foundValue) {
-            //         return Promise.resolve(foundValue);
-            //     }
-            // }
         }
     }
     return Promise.reject();
 }
-
 
 export function findValueByName<T>(vars: TJson<T>[] | undefined, targetName: string): Promise<T> | undefined {
     if (vars !== undefined) {
@@ -73,3 +63,15 @@ export const objectToMap = (obj: Mapping) => {
     return map;
 };
 
+export const mapToJsonArray = <T>(map: Map<any, any>) => {
+    return Array.from(map.entries()).map(([key, value]) => {
+      const jsonEntry: TJson<T> = { key };
+      if (value instanceof Map) {
+        jsonEntry.array = mapToJsonArray(value);
+      } else {
+        jsonEntry.value = value;
+      }
+      return jsonEntry;
+    });
+  }
+  

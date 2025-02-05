@@ -1,7 +1,6 @@
 import * as vscode from 'vscode';
 import { TJson } from '../helpers/json';
 import { dsGlobalVars } from '../datastore/dsGlobalVars';
-import { log } from '../decorators/log';
 import { GlobalVars } from '../extension';
 
 export class GlobalVarsProvider implements vscode.TreeDataProvider<TJson<string>> {
@@ -47,7 +46,7 @@ export class GlobalVarsProvider implements vscode.TreeDataProvider<TJson<string>
         treeItem.collapsibleState = element.array ? vscode.TreeItemCollapsibleState.Collapsed : vscode.TreeItemCollapsibleState.None;
         return treeItem;
     }
-    public getChildren(element?: TJson<string>): Promise<TJson<string>[]> | TJson<string>[] {
+    public getChildren(element?: TJson<string>): TJson<string>[] {
         if (element === undefined) {
             return GlobalVars.GetGlobalVarsToArray();
         }

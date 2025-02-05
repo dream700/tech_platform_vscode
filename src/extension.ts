@@ -5,7 +5,7 @@ import { IPingResType } from './providers.js';
 import { ExtensionAvailableProvider } from './providers/ext-available.js';
 import { GlobalVarsProvider } from './providers/globalvars.js';
 import { HWsProvider } from './providers/hws.js';
-import { objectToMap, TJson } from './helpers/json.js';
+import { mapToJsonArray, objectToMap, TJson } from './helpers/json.js';
 
 
 //const serverSetting = vscode.workspace.getConfiguration('yourPackageName').server;
@@ -13,28 +13,28 @@ import { objectToMap, TJson } from './helpers/json.js';
 
 export class GlobalVars {
 
-	private static _globalVarsExtensions: Map<any, any> = new Map<any, any>();	
+	private static _globalVarsExtensions: Map<any, any> = new Map<any, any>();
 	public static get globalVarsExtensions(): Map<any, any> {
 		return GlobalVars._globalVarsExtensions;
 	}
 	public static set globalVarsExtensions(value: Map<any, any>) {
 		GlobalVars._globalVarsExtensions = value;
 	}
-	private static _globalVarsEndPoints: Map<any, any> = new Map<any, any>();	
+	private static _globalVarsEndPoints: Map<any, any> = new Map<any, any>();
 	public static get globalVarsEndPoints(): Map<any, any> {
 		return GlobalVars._globalVarsEndPoints;
 	}
 	public static set globalVarsEndPoints(value: Map<any, any>) {
 		GlobalVars._globalVarsEndPoints = value;
 	}
-	private static globalVarsMap: Map<any,any> = new Map<any,any>();	
+	private static globalVarsMap: Map<any, any> = new Map<any, any>();
 
-	static getGlobalVars():Map<any,any> {
+	static getGlobalVars(): Map<any, any> {
 		return this.globalVarsMap;
 	}
 
 	static GetGlobalVarsToArray(): TJson<string>[] {
-		return Array.from(this.globalVarsMap) as unknown as TJson<string>[];
+		return mapToJsonArray(this.globalVarsMap);
 	}
 
 	static setGlobalVars(value: any) {
@@ -46,7 +46,7 @@ export class GlobalVars {
 			}
 			if (this.globalVarsMap.has("extensions")) {
 				this.globalVarsExtensions = this.globalVarsMap.get("extensions");
-			}						
+			}
 		}
 	}
 }
@@ -96,7 +96,7 @@ export function activate(context: vscode.ExtensionContext) {
 		treeDataProvider: extensionAvailable
 	});
 	const hws = new HWsProvider();
-	vscode.window.registerTreeDataProvider('vk-tp.HWs',hws);
+	vscode.window.registerTreeDataProvider('vk-tp.HWs', hws);
 	const hwsProvider = vscode.window.createTreeView('vk-tp.HWs', {
 		treeDataProvider: hws
 	});
@@ -108,7 +108,7 @@ export function activate(context: vscode.ExtensionContext) {
 		vscode.commands.registerCommand('tech-platform.RefreshStands', () => {
 			extensionAvailable.refresh();
 		})
-	);	
+	);
 	context.subscriptions.push(disposable);
 	context.subscriptions.push(disposableCheckConnection);
 }

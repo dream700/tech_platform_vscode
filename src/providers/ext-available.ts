@@ -1,7 +1,5 @@
 import * as vscode from 'vscode';
-import { log } from '../decorators/log';
 import { dsExtensionsIndexJson } from '../datastore/ext-index';
-import { TJson } from '../helpers/json';
 import { dsExtension } from '../datastore/dsExtension';
 import { dsExtensionAvailable } from '../datastore/dsExtAvailable';
 
@@ -25,7 +23,6 @@ export class ExtensionAvailableProvider implements vscode.TreeDataProvider<dsExt
 
     }
 
-    @log()
     public refresh(): Promise<void> {
         this.extensions.loadExtensions().then(() => this._onDidChangeTreeData.fire())
             .then(() => {

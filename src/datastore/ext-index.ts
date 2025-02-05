@@ -1,8 +1,5 @@
-import { errorHandle } from "../decorators/errorHandle";
-import { successfullyNotify } from "../decorators/successfully";
 import { findValueByName, TJson } from "../helpers/json";
 import { parseJson } from "../helpers/json";
-import { log } from '../decorators/log';
 
 
 export class dsExtensionsIndexJson {
@@ -17,9 +14,6 @@ export class dsExtensionsIndexJson {
         this.downloadChecksumExtIndex();
     }
 
-    @successfullyNotify("Successfully checksum downloaded ext index")
-    @errorHandle("Failed to download checksum ext index")
-    @log()
     public downloadChecksumExtIndex(): Promise<void> {
         return new Promise((resolve, reject) => {
             fetch(this.nexusApiUrl)
@@ -35,9 +29,6 @@ export class dsExtensionsIndexJson {
                 });
         });
     }
-    @successfullyNotify("Successfully repository-extensions.index downloaded")
-    @errorHandle("Failed to download repository-extensions.index")
-    @log()
     public downloadmExtIndex(): Promise<TJson<string>[]> {
         return new Promise((resolve, reject) => {
             fetch(this.indexURL as string)
@@ -51,5 +42,4 @@ export class dsExtensionsIndexJson {
                 });
         });
     }
-
 }

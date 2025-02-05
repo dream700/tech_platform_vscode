@@ -1,5 +1,4 @@
 import { dsExtension } from '../datastore/dsExtension';
-import { log } from '../decorators/log';
 
 export class dsExtensionAvailable {
     private extensions: dsExtension[] = [];
@@ -8,7 +7,6 @@ export class dsExtensionAvailable {
         return this.extensions;
     }
 
-    @log()
     public loadExtensions(): Promise<dsExtension[]> {
         return new Promise((resolve, reject) => {
             this.extensions = [];    

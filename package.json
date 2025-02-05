@@ -26,12 +26,16 @@
         "title": "Копировать в буфер обмена"
       },
       {
+        "command": "tech-platform.sshSession",
+        "title": "Open SSH session"
+      },
+      {
         "command": "tech-platform.InstallExtension",
         "title": "Install extension"
       },
       {
         "command": "tech-platform.checkConnection",
-        "title": "Check connection to Personal stand (ping em-user-api.service.cloudcore)"
+        "title": "Check connection to Personal stand"
       },
       {
         "command": "tech-platform.getExtensionAvailable",
@@ -71,6 +75,16 @@
           {
             "command": "tech-platform.copyGlobalVarValue",
             "when": "(view == vk-tp.globalVars && vk-tp.globalVars) || (view==vk-tp.HWs)",
+            "group": "navigation"
+          },
+          {
+            "command": "tech-platform.sshSession",
+            "when": "view == vk-tp.HWs && viewItem == ipv4",
+            "group": "navigation"
+          },
+          {
+            "command": "tech-platform.checkConnection",
+            "when": "view == vk-tp.HWs && viewItem == ipv4", 
             "group": "navigation"
           },
           {
