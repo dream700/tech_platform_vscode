@@ -1,6 +1,6 @@
 import { GlobalVars } from "../extension";
 import { findValueByName, objectToMap } from "../helpers/json";
-import { dsVersions } from "./dsVersions";
+import { APIRepository } from "../api/Repository";
 
 export class dsExtension {
     uuid: string | undefined;
@@ -14,11 +14,11 @@ export class dsExtension {
     public getExtensionInfo(): Promise<dsExtension[]> {
         return new Promise<dsExtension[]>(resolve => {
             if (this.extensions === undefined) {
-                const urlNodeManager = GlobalVars.globalVarsEndPoints.get("Repository");
-                if (urlNodeManager) {
-                    const user_api_url = urlNodeManager.get("user_api_url");
+                const urlRepository = GlobalVars.globalVarsEndPoints.get("Repository");
+                if (urlRepository) {
+                    const user_api_url = urlRepository.get("user_api_url");
                     if (user_api_url) {
-                        let v = new dsVersions();
+                        let v = new APIRepository();
                         v.loadExtVersionInfo(user_api_url, this.name).then(res => {
                             this.extensions = [];
                             res.forEach((value: Map<any, any>, key: string) => {

@@ -34,6 +34,10 @@
         "title": "Install extension"
       },
       {
+        "command": "tech-platform.OpenManifest",
+        "title": "Open manifest.yaml extension"
+      },
+      {
         "command": "tech-platform.checkConnection",
         "title": "Check connection to Personal stand"
       },
@@ -89,6 +93,11 @@
           },
           {
             "command": "tech-platform.InstallExtension",
+            "when": "view == vk-tp.extension && vk-tp.extension",
+            "group": "navigation"
+          },
+          {
+            "command": "tech-platform.OpenManifest",
             "when": "view == vk-tp.extension && vk-tp.extension",
             "group": "navigation"
           }

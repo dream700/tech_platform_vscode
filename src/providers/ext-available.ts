@@ -3,6 +3,8 @@ import { dsExtensionsIndexJson } from '../datastore/ext-index';
 import { dsExtension } from '../datastore/dsExtension';
 import { dsExtensionAvailable } from '../datastore/dsExtAvailable';
 import { formatDateString } from '../helpers/json';
+import { GlobalVars } from '../extension';
+import { APIRepository } from '../api/Repository';
 
 export class ExtensionAvailableProvider implements vscode.TreeDataProvider<dsExtension> {
     private _onDidChangeTreeData: vscode.EventEmitter<dsExtension | undefined | void> = new vscode.EventEmitter<dsExtension | undefined | void>();
@@ -19,6 +21,26 @@ export class ExtensionAvailableProvider implements vscode.TreeDataProvider<dsExt
             }
             if (item && item.uuid !== undefined) {
                 vscode.window.showInformationMessage(`Installing Extension: ${item.name} ${item.version}`);
+            }
+        });
+        const openManifest = vscode.commands.registerCommand('tech-platform.OpenManifest', (item: dsExtension) => {
+            if (item && item.uuid !== undefined) {
+                                const urlRepository = GlobalVars.globalVarsEndPoints.get("Repository");
+                                if (urlRepository) {
+                                    const user_api_url = urlRepository.get("user_api_url");
+                                    if (user_api_url) {
+                                        let v = new APIRepository();
+                                        v.loadManifest(user_api_url, item.uuid).then(res => {
+                                            vscode.workspace.openTextDocument({ content: res, language: 'yaml' }).then(doc => {
+                                                return vscode.window.showTextDocument(doc);    
+                                            });                                            
+                                        });
+                                    }
+                                }
+                
+
+
+                vscode.window.showInformationMessage(`Open manifest: ${item.name} ${item.version}`);
             }
         });
 
