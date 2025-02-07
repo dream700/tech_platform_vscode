@@ -6,6 +6,7 @@ export class dsExtension {
     uuid: string | undefined;
     name: string;
     version: string | undefined;
+    update: string | undefined;
     extensions: dsExtension[] | undefined;
     constructor(name: string) {
         this.name = name;
@@ -25,6 +26,7 @@ export class dsExtension {
                                     let extension = new dsExtension(value.get("name"));
                                     extension.uuid = value.get("uuid");
                                     extension.version = value.get("version");
+                                    extension.update = value.get("updated_at");
                                     this.extensions?.push(extension);
                                     resolve(this.extensions!);
                                 }

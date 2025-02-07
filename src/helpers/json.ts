@@ -65,13 +65,41 @@ export const objectToMap = (obj: Mapping) => {
 
 export const mapToJsonArray = <T>(map: Map<any, any>) => {
     return Array.from(map.entries()).map(([key, value]) => {
-      const jsonEntry: TJson<T> = { key };
-      if (value instanceof Map) {
-        jsonEntry.array = mapToJsonArray(value);
-      } else {
-        jsonEntry.value = value;
-      }
-      return jsonEntry;
+        const jsonEntry: TJson<T> = { key };
+        if (value instanceof Map) {
+            jsonEntry.array = mapToJsonArray(value);
+        } else {
+            jsonEntry.value = value;
+        }
+        return jsonEntry;
     });
-  }
-  
+};
+
+export function findInMap(
+    map: Map<any, any>,
+    key: any
+): any | undefined {
+    if (map.has(key)) {
+        return map.get(key);
+    }
+    for (const [k, v] of map.entries()) {
+        if (v instanceof Map) {
+            const result = findInMap(v, key);
+            if (result !== undefined) {
+                return result;
+            }
+        }
+    }
+    return undefined; 
+}
+
+export function formatDateString(dateString?: string): string {
+    if (dateString === undefined) {
+        return 'undefined';
+    }
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, '0'); 
+    const month = String(date.getMonth() + 1).padStart(2, '0'); 
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`;
+}

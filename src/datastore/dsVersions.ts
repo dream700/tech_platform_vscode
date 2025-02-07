@@ -6,18 +6,11 @@ export class dsVersions {
     public loadExtVersionInfo(urlRepository: string, extName: string): Promise<Map<any, any>> {
         return new Promise((resolve, reject) => {
             fetch(`${urlRepository}/v1/extensions/?name=${extName}&sort_by=version`)
-                .then(
-                    response => {
-                        const data: any = response.json();
-                        return data;
-                    })
-                .then(
-                    data => {
-                        // this.versions = parseJson(data);
-                        const versions = objectToMap(data);
-                        resolve(versions);
-                    })
-                .catch(reject);
+                .then(response => response.json())
+                .then((data: any) => {
+                    const versions = objectToMap(data);
+                    resolve(versions);
+                }).catch(reject);
         });
     }
 }

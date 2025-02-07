@@ -55,8 +55,8 @@
       "tech-platform": [
         {
           "id": "vk-tp.HWs",
-          "name": "HW list",
-          "contextualTitle": "HW instance explorer"
+          "name": "HW/VM list",
+          "contextualTitle": "HW/VM instance explorer"
         },
         {
           "id": "vk-tp.globalVars",
@@ -93,8 +93,17 @@
             "group": "navigation"
           }
       ]
-  }
-
+    },
+    "configuration": {
+      "title": "VK Tech Platform",
+      "properties": {
+          "tech-platform.sshSession": {
+              "type": "string",
+              "default": "~/.ssh/core_lab_key",
+              "description": "SSH key for connection to Personal stand"
+          }
+      }
+    }  
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",

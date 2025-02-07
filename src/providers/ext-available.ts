@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import { dsExtensionsIndexJson } from '../datastore/ext-index';
 import { dsExtension } from '../datastore/dsExtension';
 import { dsExtensionAvailable } from '../datastore/dsExtAvailable';
+import { formatDateString } from '../helpers/json';
 
 export class ExtensionAvailableProvider implements vscode.TreeDataProvider<dsExtension> {
     private _onDidChangeTreeData: vscode.EventEmitter<dsExtension | undefined | void> = new vscode.EventEmitter<dsExtension | undefined | void>();
@@ -40,7 +41,7 @@ export class ExtensionAvailableProvider implements vscode.TreeDataProvider<dsExt
             label: element.name
         };
         if (element.version !== undefined) {
-            treeItem.label = ` v${element.version}`;
+            treeItem.label = ` v${element.version} (${formatDateString(element?.update)})`;
         }
         treeItem.collapsibleState = element.version ? vscode.TreeItemCollapsibleState.None : vscode.TreeItemCollapsibleState.Collapsed;
         return treeItem;
