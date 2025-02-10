@@ -6,6 +6,7 @@ import { ExtensionAvailableProvider } from './providers/ext-available.js';
 import { GlobalVarsProvider } from './providers/globalvars.js';
 import { HWsProvider } from './providers/instances.js';
 import { mapToJsonArray, objectToMap, TJson } from './helpers/json.js';
+import { InstalledExtensionProvider } from './providers/ints-exntesions.js';
 
 
 //const serverSetting = vscode.workspace.getConfiguration('yourPackageName').server;
@@ -96,9 +97,15 @@ export function activate(context: vscode.ExtensionContext) {
 		treeDataProvider: extensionAvailable
 	});
 	const hws = new HWsProvider();
-	vscode.window.registerTreeDataProvider('vk-tp.HWs', hws);
-	const hwsProvider = vscode.window.createTreeView('vk-tp.HWs', {
+	vscode.window.registerTreeDataProvider('vk-tp.Instances', hws);
+	const hwsProvider = vscode.window.createTreeView('vk-tp.Instances', {
 		treeDataProvider: hws
+	});
+
+	const installedExtension = new InstalledExtensionProvider();
+	vscode.window.registerTreeDataProvider('vk-tp.InstalledExtension', hws);
+	const installedExtensionProvider = vscode.window.createTreeView('vk-tp.InstalledExtension', {
+		treeDataProvider: installedExtension
 	});
 	globalVars.refresh()
 		.then(() => extensionAvailable.refresh().then(() => hws.refresh()));

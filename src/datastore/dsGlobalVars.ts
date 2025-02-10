@@ -1,5 +1,4 @@
 import { GlobalVars } from '../extension';
-import { TJson, parseJson } from '../helpers/json';
 
 
 export class dsGlobalVars {

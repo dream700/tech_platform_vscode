@@ -17,16 +17,21 @@ export class Instance {
     }
 }
 
-export class dsHWs {
+export class dsInstances {
 
     nm: NodeManagerAPI = new NodeManagerAPI();
-    HWs: TJson<Instance>[] = [];
+    instances: TJson<Instance>[] = [];
 
-    public gethws(): Promise<TJson<Instance>[]> {
-        return new Promise((resolve, reject) => {
-            resolve(this.HWs);
-        });
+    // public getInstances(): Promise<TJson<Instance>[]> {
+    //     return new Promise((resolve) => {
+    //         resolve(this.instances);
+    //     });
+    // }
+
+    public getInstances(): TJson<Instance>[] {
+        return this.instances;
     }
+
     private getVMs(hw: TJson<Instance>): Promise<TJson<Instance>[]> {
         return new Promise((resolve, reject) => {
             if (GlobalVars.globalVarsEndPoints.has("NodeManager")) {
@@ -34,7 +39,7 @@ export class dsHWs {
                 const user_api_url = urlNodeManager.get("user_api_url");
                 if (user_api_url) {
                     this.nm.loadInstances(user_api_url).then(res => {
-                        this.HWs = [];
+                        this.instances = [];
                         res.forEach((value: Map<any, any>, key: string) => {
                             let instance_type = value.get("instance_type");
                             if (instance_type && instance_type === "VM") {
@@ -42,11 +47,11 @@ export class dsHWs {
                                 if (compute_ipv4 && hw.value?.ipaddr === compute_ipv4) {
                                     let hwl: TJson<Instance> = { key: `${value.get("name")} - ${value.get("status")}` };
                                     hwl.value = new Instance(value.get("uuid"), value.get("name"), findInMap(value, "ipv4"), value.get("status"));
-                                    this.HWs.push(hwl);
+                                    this.instances.push(hwl);
                                 }
                             }
                         });
-                        resolve(this.HWs);
+                        resolve(this.instances);
                     }).catch(reject);
                 }
             }
@@ -60,14 +65,14 @@ export class dsHWs {
                 const user_api_url = urlNodeManager.get("user_api_url");
                 if (user_api_url) {
                     this.nm.loadHWs(user_api_url).then(res => {
-                        this.HWs = [];
+                        this.instances = [];
                         res.forEach((value: Map<any, any>, key: string) => {
                             if (value.has("name")) {
                                 let hw = new Instance(value.get("uuid"), value.get("name"));
                                 hw.ipaddr = findInMap(value, "ipv4");
                                 hw.status = findInMap(value, "status");
                                 let hwl: TJson<Instance> = { key: `${hw.name} - ${key}`, value: hw, array: mapToJsonArray<Instance>(value) };
-                                this.HWs.push(hwl);
+                                this.instances.push(hwl);
                                 resolve();
                             }
                         });
@@ -76,14 +81,14 @@ export class dsHWs {
             }
         });
     }
-    public getInstances(): Promise<TJson<Instance>[]> {
+    public refreshInstances(): Promise<TJson<Instance>[]> {
         return new Promise((resolve, reject) => {
             if (GlobalVars.globalVarsEndPoints.has("NodeManager")) {
                 const urlNodeManager = GlobalVars.globalVarsEndPoints.get("NodeManager");
                 const user_api_url = urlNodeManager.get("user_api_url");
                 if (user_api_url) {
                     this.nm.loadInstances(user_api_url).then(res => {
-                        this.HWs = [];
+                        this.instances = [];
                         res.forEach((value: Map<any, any>, key: string) => {
                             let instance: TJson<Instance> = { key: `${value.get("name")} - ${value.get("status")}` };
                             instance.value = new Instance(
@@ -92,9 +97,9 @@ export class dsHWs {
                                 value.get("instance_type"),
                                 findInMap(value, "ipv4"),
                                 value.get("status"));
-                            this.HWs.push(instance);
+                            this.instances.push(instance);
                         });
-                        resolve(this.HWs);
+                        resolve(this.instances);
                     }).catch(reject);
                 }
             }

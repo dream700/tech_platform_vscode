@@ -63,9 +63,14 @@
           "contextualTitle": "GLOBAL vars instance explorer"
         },
         {
-          "id": "vk-tp.HWs",
+          "id": "vk-tp.Instances",
           "name": "Instances",
           "contextualTitle": "HW/VM instance explorer"
+        },
+        {
+          "id": "vk-tp.InstalledExtension",
+          "name": "Installed extension",
+          "contextualTitle": "Installed exntension explorer"
         },
         {
           "id": "vk-tp.extension",
@@ -109,7 +114,8 @@
           "tech-platform.sshSession": {
               "type": "string",
               "default": "-i ~/.ssh/core_lab_key -o StrictHostKeyChecking=no",
-              "description": "SSH key for connection to Personal stand"
+              "description": "SSH options for connection to Personal stand",
+              "order": 1
           }
       }
     }  

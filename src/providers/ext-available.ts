@@ -1,20 +1,20 @@
 import * as vscode from 'vscode';
 import { dsExtensionsIndexJson } from '../datastore/ext-index';
-import { dsExtension } from '../datastore/dsExtension';
+import { dsExtensionInfo } from '../datastore/dsExtensionInfo';
 import { dsExtensionAvailable } from '../datastore/dsExtAvailable';
 import { formatDateString } from '../helpers/json';
 import { GlobalVars } from '../extension';
 import { RepositoryAPI } from '../api/Repository';
 
-export class ExtensionAvailableProvider implements vscode.TreeDataProvider<dsExtension> {
-    private _onDidChangeTreeData: vscode.EventEmitter<dsExtension | undefined | void> = new vscode.EventEmitter<dsExtension | undefined | void>();
-    readonly onDidChangeTreeData: vscode.Event<dsExtension | undefined | void> = this._onDidChangeTreeData.event;
+export class ExtensionAvailableProvider implements vscode.TreeDataProvider<dsExtensionInfo> {
+    private _onDidChangeTreeData: vscode.EventEmitter<dsExtensionInfo | undefined | void> = new vscode.EventEmitter<dsExtensionInfo | undefined | void>();
+    readonly onDidChangeTreeData: vscode.Event<dsExtensionInfo | undefined | void> = this._onDidChangeTreeData.event;
 
     extensions: dsExtensionAvailable;
 
     constructor() {
         this.extensions = new dsExtensionAvailable();
-        const copyCommand = vscode.commands.registerCommand('tech-platform.InstallExtension', (item: dsExtension) => {
+        const copyCommand = vscode.commands.registerCommand('tech-platform.InstallExtension', (item: dsExtensionInfo) => {
             if (item && item.uuid === undefined) {
                 vscode.window.showInformationMessage(`Select version extension ${item.name} for installing.`,"Error");
                 return;
@@ -23,7 +23,7 @@ export class ExtensionAvailableProvider implements vscode.TreeDataProvider<dsExt
                 vscode.window.showInformationMessage(`Installing Extension: ${item.name} ${item.version}`);
             }
         });
-        const openManifest = vscode.commands.registerCommand('tech-platform.OpenManifest', (item: dsExtension) => {
+        const openManifest = vscode.commands.registerCommand('tech-platform.OpenManifest', (item: dsExtensionInfo) => {
             if (item && item.uuid !== undefined) {
                                 const urlRepository = GlobalVars.globalVarsEndPoints.get("Repository");
                                 if (urlRepository) {
@@ -59,7 +59,7 @@ export class ExtensionAvailableProvider implements vscode.TreeDataProvider<dsExt
     }
 
     static index: number = 0;
-    public getTreeItem(element: dsExtension): vscode.TreeItem {
+    public getTreeItem(element: dsExtensionInfo): vscode.TreeItem {
         const treeItem: vscode.TreeItem = {
             label: element.name
         };
@@ -69,13 +69,13 @@ export class ExtensionAvailableProvider implements vscode.TreeDataProvider<dsExt
         treeItem.collapsibleState = element.version ? vscode.TreeItemCollapsibleState.None : vscode.TreeItemCollapsibleState.Collapsed;
         return treeItem;
     }
-    public getChildren(element: dsExtension): Thenable<dsExtension[]> | undefined {
+    public getChildren(element: dsExtensionInfo): dsExtensionInfo[] | Thenable<dsExtensionInfo[]> | undefined {
         if (element === undefined) {
-            return Promise.resolve(this.extensions.getExtensionsAvailable());
+            return this.extensions.getExtensionsAvailable();
         }
         if (element.uuid === undefined) {
             return element.getExtensionInfo();
         }
-        Promise.resolve([]);
+        return [];
     }
 }

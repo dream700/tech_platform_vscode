@@ -1,17 +1,17 @@
 import * as vscode from 'vscode';
 import { TJson } from '../helpers/json';
 import { NodeManagerAPI } from '../api/NodeManager';
-import { dsHWs, Instance } from '../datastore/dsInstances';
+import { dsInstances, Instance } from '../datastore/dsInstances';
 
 export class HWsProvider implements vscode.TreeDataProvider<TJson<Instance>> {
     private _onDidChangeTreeData: vscode.EventEmitter<TJson<Instance> | undefined | void> = new vscode.EventEmitter<TJson<Instance> | undefined | void>();
     readonly onDidChangeTreeData: vscode.Event<TJson<Instance> | undefined | void> = this._onDidChangeTreeData.event;
 
-    hws: dsHWs;
+    instances: dsInstances;
 
     constructor() {
-        this.hws = new dsHWs();
-        const copyCommand = vscode.commands.registerCommand('tech-platform.sshSession', (item: TJson<Instance>) => {
+        this.instances = new dsInstances();
+        vscode.commands.registerCommand('tech-platform.sshSession', (item: TJson<Instance>) => {
             if (item && item.value?.ipaddr !== undefined) {
                 let sshOptions = vscode.workspace.getConfiguration('tech-platform').sshSession;
                 if (sshOptions===undefined) {
@@ -31,7 +31,7 @@ export class HWsProvider implements vscode.TreeDataProvider<TJson<Instance>> {
 
     public refresh(): Promise<void> {
         return new Promise((resolve) => {
-            this.hws.getInstances().then(() => {
+            this.instances.refreshInstances().then(() => {
                 this._onDidChangeTreeData.fire();
                 resolve();
             });
@@ -51,13 +51,10 @@ export class HWsProvider implements vscode.TreeDataProvider<TJson<Instance>> {
         treeItem.collapsibleState = element.array ? vscode.TreeItemCollapsibleState.Collapsed : vscode.TreeItemCollapsibleState.None;
         return treeItem;
     }
-    public getChildren(element: TJson<Instance>): Thenable<TJson<Instance>[]> | undefined {
+    public getChildren(element: TJson<Instance>): TJson<Instance>[] | undefined {
         if (element === undefined) {
-            return this.hws.gethws();
+            return this.instances.getInstances();
         }
-        // if (element.array) {
-        //     return this.hws.getVMs(element);
-        // }
         Promise.resolve([]);
     }
 }
