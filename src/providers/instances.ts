@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import { TJson } from '../helpers/json';
-import { APINodeManager } from '../api/NodeManager';
-import { dsHWs, Instance } from '../datastore/dsHWs';
+import { NodeManagerAPI } from '../api/NodeManager';
+import { dsHWs, Instance } from '../datastore/dsInstances';
 
 export class HWsProvider implements vscode.TreeDataProvider<TJson<Instance>> {
     private _onDidChangeTreeData: vscode.EventEmitter<TJson<Instance> | undefined | void> = new vscode.EventEmitter<TJson<Instance> | undefined | void>();
@@ -25,7 +25,6 @@ export class HWsProvider implements vscode.TreeDataProvider<TJson<Instance>> {
                 const terminal = vscode.window.createTerminal(terminalName,'/bin/sh');
                 terminal.sendText(sshCommand);
                 terminal.show();
-                // vscode.window.showInformationMessage(`Open ssh session: ${item.value?.ipaddr}`);
             }
         });
     }

@@ -1,6 +1,6 @@
 import { objectToMap, parseJson, TJson } from '../helpers/json';
 
-export class APINodeManager {
+export class NodeManagerAPI {
 
     public loadHWs(urlNodeManager: string): Promise<Map<any, any>> {
         return new Promise((resolve, reject) => {

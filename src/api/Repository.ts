@@ -1,9 +1,9 @@
 import { objectToMap } from '../helpers/json';
 
 
-export class APIRepository {
+export class RepositoryAPI {
 
-    public loadExtVersionInfo(urlRepository: string, extName: string): Promise<Map<any, any>> {
+    public loadExtVersionInfo(urlRepository: string, extName: string): Promise<Map<any,any>> {
         return new Promise((resolve, reject) => {
             fetch(`${urlRepository}/v1/extensions/?name=${extName}&sort_by=version`)
                 .then(response => response.json())
@@ -17,12 +17,12 @@ export class APIRepository {
     public loadManifest(urlRepository: string, extUuid: string): Promise<string> {
         return new Promise((resolve, reject) => {
             fetch(`${urlRepository}/v1/extensions/${extUuid}`)
-                .then(response => response.json()) 
-                .then((data: any) =>  {
-                  const version =  objectToMap(data)
-                  const manifest = version.get("manifest")
-                resolve(manifest);
-                }    
+                .then(response => response.json())
+                .then((data: any) => {
+                    const version = objectToMap(data);
+                    const manifest = version.get("manifest");
+                    resolve(manifest);
+                }
                 ).catch(reject);
         });
     }

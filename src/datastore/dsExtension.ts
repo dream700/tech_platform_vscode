@@ -1,6 +1,6 @@
 import { GlobalVars } from "../extension";
 import { findValueByName, objectToMap } from "../helpers/json";
-import { APIRepository } from "../api/Repository";
+import { RepositoryAPI } from "../api/Repository";
 
 export class dsExtension {
     uuid: string | undefined;
@@ -18,7 +18,7 @@ export class dsExtension {
                 if (urlRepository) {
                     const user_api_url = urlRepository.get("user_api_url");
                     if (user_api_url) {
-                        let v = new APIRepository();
+                        let v = new RepositoryAPI();
                         v.loadExtVersionInfo(user_api_url, this.name).then(res => {
                             this.extensions = [];
                             res.forEach((value: Map<any, any>, key: string) => {

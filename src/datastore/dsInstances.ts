@@ -1,4 +1,4 @@
-import { APINodeManager } from "../api/NodeManager";
+import { NodeManagerAPI } from "../api/NodeManager";
 import { GlobalVars } from "../extension";
 import { findInMap, mapToJsonArray, TJson } from "../helpers/json";
 
@@ -19,7 +19,7 @@ export class Instance {
 
 export class dsHWs {
 
-    nm: APINodeManager = new APINodeManager();
+    nm: NodeManagerAPI = new NodeManagerAPI();
     HWs: TJson<Instance>[] = [];
 
     public gethws(): Promise<TJson<Instance>[]> {
