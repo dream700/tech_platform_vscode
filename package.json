@@ -58,14 +58,14 @@
     "views": {
       "tech-platform": [
         {
-          "id": "vk-tp.HWs",
-          "name": "HW/VM list",
-          "contextualTitle": "HW/VM instance explorer"
+          "id": "vk-tp.globalVars",
+          "name": "Stands",
+          "contextualTitle": "GLOBAL vars instance explorer"
         },
         {
-          "id": "vk-tp.globalVars",
-          "name": "GLOBAL VARS",
-          "contextualTitle": "GLOBAL vars instance explorer"
+          "id": "vk-tp.HWs",
+          "name": "Instances",
+          "contextualTitle": "HW/VM instance explorer"
         },
         {
           "id": "vk-tp.extension",
@@ -108,7 +108,7 @@
       "properties": {
           "tech-platform.sshSession": {
               "type": "string",
-              "default": "~/.ssh/core_lab_key",
+              "default": "-i ~/.ssh/core_lab_key -o StrictHostKeyChecking=no",
               "description": "SSH key for connection to Personal stand"
           }
       }

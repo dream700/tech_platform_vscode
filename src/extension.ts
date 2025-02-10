@@ -4,7 +4,7 @@ import * as vscode from 'vscode';
 import { IPingResType } from './providers.js';
 import { ExtensionAvailableProvider } from './providers/ext-available.js';
 import { GlobalVarsProvider } from './providers/globalvars.js';
-import { HWsProvider } from './providers/hws.js';
+import { HWsProvider } from './providers/instances.js';
 import { mapToJsonArray, objectToMap, TJson } from './helpers/json.js';
 
 
